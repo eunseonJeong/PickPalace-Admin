@@ -1,0 +1,19 @@
+{
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "Material Theme Darker High Contrast",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "git.openRepositoryInParentFolders": "never",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "security.workspace.trust.untrustedFiles": "open",
+  "code-runner.runInTerminal": true,
+  "cloudcode.duetAI.project": "fresh-rope-419401",
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "prisma.showPrismaDataPlatformNotification": false,
+  "redhat.telemetry.enabled": false,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}
