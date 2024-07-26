@@ -1,10 +1,21 @@
-import { UserButton } from "@clerk/nextjs";
+import React from "react";
+import db from "@/lib/prismadb";
 
-const DashboardPage = () => {
+type Props = {
+  params: { storeId: string };
+};
+
+const DashboardPage: React.FC<Props> = async ({params}:Props) => {
+
+  const store = await db.store.findFirst({
+    where: {
+      id: params.storeId,
+    },
+  });
+
   return (
     <>
-      <UserButton/>
-      <div>대시보드</div>
+      <div>활성화된 스토어: {store?.name}</div>
     </>
   );
 };
