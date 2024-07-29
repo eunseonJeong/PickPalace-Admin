@@ -1,7 +1,7 @@
-
 import db from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Navbar } from "@/components/navigation/navbar";
 
 type Props = {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ const DashboardLayout = async ({ children, params }: Props) => {
     redirect("/sign-in");
   }
 
-// 접근한 가게가 로그인된 사용자가 등록한 가게인지 DB에서 확인
+  // 접근한 가게가 로그인된 사용자가 등록한 가게인지 DB에서 확인
   const store = await db.store.findFirst({
     where: {
       id: params.storeId,
@@ -31,10 +31,10 @@ const DashboardLayout = async ({ children, params }: Props) => {
 
   return (
     <>
-      <div>TODO: Navbar 추가할 위치</div>
-       {children}
-  </>
-);
+      <Navbar />
+      {children}
+    </>
+  );
 };
 
 export default DashboardLayout;
