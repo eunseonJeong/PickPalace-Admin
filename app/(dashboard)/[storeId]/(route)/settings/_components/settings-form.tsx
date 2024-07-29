@@ -13,11 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Store } from "@prisma/client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Heading } from "@/components/ui/heading";
-import { Trash } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "sonner";
 
 type Props = {
   initialValues: Store;
@@ -28,8 +31,11 @@ const formSchema = z.object({
 });
 
 const SettingForm: React.FC<Props> = ({ initialValues }) => {
+  const router = useRouter();
+  const params = useParams();
+
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setStartTransition] = useTransition();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,14 +44,22 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
 
   // 가게 이름 수정
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    setStartTransition(async () => {
+      try {
+        await axios.patch(`/api/stores/${params.storeId}`, values);
+        router.refresh();
+        toast.success("가게 이름이 변경되었습니다.", { id: "patch-store" });
+      } catch (error) {
+        toast.error("이름 변경에 실패했습니다.", { id: "patch-store" });
+      }
+    });
   };
   return (
     <>
       <div className="flex items-center justify-between">
         <Heading title={"Settings"} description={"Manage store preferences"} />
         <Button
-          disabled={isLoading}
+          disabled={isPending}
           variant="destructive"
           size="icon"
           onClick={() => setIsOpen(true)}
@@ -68,7 +82,7 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isPending}
                       placeholder={"Store Name"}
                       {...field}
                     />
@@ -78,7 +92,8 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
               )}
             />
           </div>
-          <Button disabled={isLoading} className="ml-auto" type="submit">
+          <Button disabled={isPending} className="ml-auto" type="submit">
+            {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
             Save changes
           </Button>
         </form>
