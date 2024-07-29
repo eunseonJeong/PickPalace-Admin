@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/lib/prismadb";
 
+//가게 이름 등록 api
 export async function POST(request: Request) {
   try {
     const { userId } = auth();
