@@ -2,6 +2,7 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import db from "@/lib/prismadb";
+import SettingsForm from "@/app/(dashboard)/[storeId]/(route)/settings/_components/settings-form";
 
 type Props = {
   params: {
@@ -9,7 +10,7 @@ type Props = {
   };
 };
 
-const SettingPage: React.FC<Props> = async () => {
+const SettingPage: React.FC<Props> = async ({ params }) => {
   //로그인된 사용자인지 확인
   const { userId } = auth();
 
@@ -33,7 +34,9 @@ const SettingPage: React.FC<Props> = async () => {
 
   return (
     <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">Settings Page</div>
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <SettingsForm initialValues={store} />
+      </div>
     </div>
   );
 };
