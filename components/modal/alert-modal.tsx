@@ -3,6 +3,7 @@
 import { Modal } from "@/components/modal/modal";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import React from "react";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -10,7 +11,12 @@ interface Props {
   onConfirm: () => void;
 }
 
-export const AlertModal = ({ isOpen, onClose, loading, onConfirm }: Props) => {
+export const AlertModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  loading,
+  onConfirm,
+}: Props) => {
   // const [isMounted, setIsMounted] = useState(false);
   //
   // useEffect(() => {
