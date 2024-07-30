@@ -21,6 +21,7 @@ import { Loader2, Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
+import { AlertModal } from "@/components/modal/alert-modal";
 
 type Props = {
   initialValues: Store;
@@ -36,6 +37,7 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setStartTransition] = useTransition();
+  const [isDeletePending, setDeleteTransition] = useTransition();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,8 +56,34 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
       }
     });
   };
+
+  //가게 이름 삭제
+  const onDelete = () => {
+    setDeleteTransition(async () => {
+      try {
+        await axios.delete(`/api/stores/${params.storeId}`);
+        router.refresh();
+        toast.success("삭제되었습니다.", { id: "delete-store" });
+        router.push("/");
+      } catch (error) {
+        toast.error("모든 물품과 카테고리를 삭제했는지 확인하세요.", {
+          id: "delete-store",
+        });
+      } finally {
+        setIsOpen(false);
+      }
+    });
+  };
+
   return (
     <>
+      {/* 삭제 확인 모달 */}
+      <AlertModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onConfirm={onDelete}
+        loading={isDeletePending}
+      />
       <div className="flex items-center justify-between">
         <Heading title={"Settings"} description={"Manage store preferences"} />
         <Button
