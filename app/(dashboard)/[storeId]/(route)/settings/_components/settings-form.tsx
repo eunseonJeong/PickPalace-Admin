@@ -22,6 +22,8 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 import { AlertModal } from "@/components/modal/alert-modal";
+import { ApiAlert } from "@/components/ui/api-alert";
+import { useOrigin } from "@/hooks/use-origin";
 
 type Props = {
   initialValues: Store;
@@ -34,6 +36,7 @@ const formSchema = z.object({
 const SettingForm: React.FC<Props> = ({ initialValues }) => {
   const router = useRouter();
   const params = useParams();
+  const origin = useOrigin();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setStartTransition] = useTransition();
@@ -126,6 +129,12 @@ const SettingForm: React.FC<Props> = ({ initialValues }) => {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variants="public"
+      />
     </>
   );
 };

@@ -16,7 +16,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { Store } from "@prisma/client";
-import { useStoreModal } from "@/hooks/useStoreModal";
+import { useStoreModal } from "@/hooks/use-store-modal";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

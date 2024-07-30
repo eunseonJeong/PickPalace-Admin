@@ -1,0 +1,20 @@
+//현재 URL 을 포함한 복사
+import { useEffect, useState } from "react";
+
+export const useOrigin = () => {
+  const [mounted, setMounted] = useState(false);
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (mounted === false) {
+    return "";
+  }
+
+  return origin;
+};
