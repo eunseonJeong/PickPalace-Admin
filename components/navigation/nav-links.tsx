@@ -15,6 +15,11 @@ export const NavLinks = ({
   // 설정페이지로 이동하는 경로 배열
   const routes = [
     {
+      href: `/${params.storeId}`,
+      label: "Overview",
+      active: pathname === `/${params.storeId}`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Setting",
       active: pathname === `/${params.storeId}/settings`,
