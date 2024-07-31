@@ -20,6 +20,11 @@ export const NavLinks = ({
       active: pathname === `/${params.storeId}`,
     },
     {
+      href: `/${params.storeId}/billboards`,
+      label: "Billboards",
+      active: pathname === `/${params.storeId}/billboards`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Setting",
       active: pathname === `/${params.storeId}/settings`,
