@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { AlertModal } from "@/components/modal/alert-modal";
+import { ImageUploadComponent } from "@/components/ui/image-upload";
 
 const formSchema = z.object({
   label: z.string().min(1),
@@ -39,6 +40,7 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isPatchPending, setIsPatchPending] = useTransition();
 
   const title = initialData ? "빌보드 수정" : "빌보드 생성";
   const description = initialData ? "빌보드 수정" : "새 빌보드 추가";
@@ -54,8 +56,19 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
     defaultValues: initialData || { label: "", imageUrl: "" },
   });
 
-  const onSubmit = () => {
-    // TODO: 빌보드 등록/수정 연동
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    startTransition(async () => {
+      try {
+        await axios.post(`/api/${params.storeId}/billboards`, values);
+        toast.success("빌보드가 등록되었습니다.", {
+          id: "billboard",
+        });
+        router.push(`/${params.storeId}/billboards`);
+        router.refresh();
+      } catch (error) {
+        toast.error("생성에 실패했습니다.");
+      }
+    });
   };
 
   const onDelete = () => {
@@ -89,6 +102,23 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
+          <FormField
+            name="imageUrl"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>배경 이미지</FormLabel>
+                <FormControl>
+                  <ImageUploadComponent
+                    disabled={isPatchPending}
+                    onChange={(url) => field.onChange(url)}
+                    onRemove={() => field.onChange("")}
+                    value={field.value ? [field.value] : []}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <div className="grid grid-cols-3 gap-8">
             <FormField
               name="label"
