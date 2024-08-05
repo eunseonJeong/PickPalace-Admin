@@ -1,8 +1,9 @@
-import db from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import db from "@/lib/prismadb";
+import { redirect } from "next/navigation";
 
-// 가게 수정
+//가게 이름 수정 api
 export async function PATCH(
   request: Request,
   { params }: { params: { storeId: string } },
@@ -11,7 +12,7 @@ export async function PATCH(
     const { userId } = auth();
     const body = await request.json();
 
-    // 수정할 가게의 이름
+    //수정 할 가게 이름
     const { name } = body;
 
     // 인증된 사용자인지 확인
@@ -41,10 +42,9 @@ export async function PATCH(
         name,
       },
     });
-
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_PATCH]", error);
+    console.log("[가게 수정]", error);
     return new NextResponse("서버 오류", { status: 500 });
   }
 }
@@ -77,7 +77,7 @@ export async function DELETE(
 
     return NextResponse.json(store);
   } catch (error) {
-    console.log("[STORES_DELETE]", error);
+    console.log("[가게 삭제]", error);
     return new NextResponse("서버 오류", { status: 500 });
   }
 }

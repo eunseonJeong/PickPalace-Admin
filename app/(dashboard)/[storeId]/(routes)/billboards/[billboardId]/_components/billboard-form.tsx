@@ -39,8 +39,8 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const [isPatchPending, setIsPatchPending] = useTransition();
+  const [isPatchPending, startPatchTransition] = useTransition();
+  const [isDeletePending, startDeleteTransition] = useTransition();
 
   const title = initialData ? "빌보드 수정" : "빌보드 생성";
   const description = initialData ? "빌보드 수정" : "새 빌보드 추가";
@@ -56,17 +56,24 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
     defaultValues: initialData || { label: "", imageUrl: "" },
   });
 
+  // 빌보드 등록/수정
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    startTransition(async () => {
+    startPatchTransition(async () => {
       try {
-        await axios.post(`/api/${params.storeId}/billboards`, values);
-        toast.success("빌보드가 등록되었습니다.", {
-          id: "billboard",
-        });
+        // 초기데이터가 없으면 등록 / 초기데이터가 있으면 수정
+        if (initialData) {
+          await axios.patch(
+            `/api/${params.storeId}/billboards/${params.billboardId}`,
+            values,
+          );
+        } else {
+          await axios.post(`/api/${params.storeId}/billboards`, values);
+        }
+        toast.success(toastMessage, { id: "patch-billboard" });
         router.push(`/${params.storeId}/billboards`);
         router.refresh();
       } catch (error) {
-        toast.error("생성에 실패했습니다.");
+        toast.error("변경에 실패했습니다.", { id: "patch-billboard" });
       }
     });
   };
@@ -81,7 +88,7 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onConfirm={onDelete}
-        loading={isPending}
+        loading={isPatchPending}
       />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
@@ -89,7 +96,7 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
           <Button
             size="icon"
             variant="destructive"
-            disabled={isPending}
+            disabled={isPatchPending}
             onClick={() => setIsOpen(true)}
           >
             <Trash className="size-4" />
@@ -128,7 +135,7 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
                   <FormLabel>빌보드 이름</FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isPending}
+                      disabled={isPatchPending}
                       placeholder="빌보드 이름을 입력하세요."
                       {...field}
                     />
@@ -138,7 +145,7 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
               )}
             />
           </div>
-          <Button type="submit" className="ml-auto" disabled={isPending}>
+          <Button type="submit" className="ml-auto" disabled={isPatchPending}>
             {action}
           </Button>
         </form>

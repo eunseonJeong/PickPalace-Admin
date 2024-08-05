@@ -2,7 +2,7 @@ import React from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import db from "@/lib/prismadb";
-import SettingsForm from "@/app/(dashboard)/[storeId]/(route)/settings/_components/settings-form";
+import SettingsForm from "@/app/(dashboard)/[storeId]/(routes)/settings/_components/settings-form";
 
 type Props = {
   params: {

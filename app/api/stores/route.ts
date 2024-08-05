@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/lib/prismadb";
 
-//가게 이름 등록 api
 export async function POST(request: Request) {
   try {
     const { userId } = auth();
@@ -14,14 +13,14 @@ export async function POST(request: Request) {
       return new NextResponse("로그인이 필요합니다.", { status: 401 });
     }
 
-    // 매장 이름이 있는지 확인
+    // 가게 이름이 있는지 확인
     if (!name) {
       return new NextResponse("등록하려는 매장 이름이 필요합니다.", {
         status: 400,
       });
     }
 
-    // DB에 가게 만들어서 등록하기
+    // DB애 가게 만들어서 등록하기
     const store = await db.store.create({
       data: {
         name,
@@ -31,10 +30,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(store);
   } catch (error) {
-    console.error("[STORES_POST]", error); // 에러를 콘솔에 출력
-    if (error instanceof Error) {
-      return new NextResponse(error.message, { status: 500 });
-    }
+    console.log("[STORES_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
