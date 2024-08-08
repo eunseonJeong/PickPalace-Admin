@@ -78,8 +78,20 @@ export const BillboardForm: React.FC<Props> = ({ initialData }) => {
     });
   };
 
-  const onDelete = () => {
-    // TODO: 빌보드 삭제 연동
+  // 빌보드 삭제
+  const onDelete = async () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(
+          `/api/${params.storeId}/billboards/${params.billboardId}`,
+        );
+        router.refresh();
+        toast.success("빌보드를 삭제했습니다.", { id: "delete-billboard" });
+        router.push(`/${params.storeId}/billboards`);
+      } catch (error) {
+        toast.error("삭제에 실패했습니다.", { id: "delete-billboard" });
+      }
+    });
   };
 
   return (

@@ -83,6 +83,7 @@ export async function PATCH(
   }
 }
 
+// 빌보드 삭제
 export async function DELETE(
   request: Request,
   { params }: { params: { billboardId: string; storeId: string } },
