@@ -10,6 +10,7 @@ import { Plus } from "lucide-react";
 import { BillboardColumns, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 import { useMemo } from "react";
+import { ApiList } from "@/components/ui/api-list";
 
 type Props = {
   data: BillboardColumns[];
@@ -43,6 +44,7 @@ export const BillboardClient = ({ data }: Props) => {
       <DataTable searchKey="label" columns={columns} data={tableData} />
       <Heading title="API" description="빌보드를 위한 API를 제공합니다." />
       <Separator />
+      <ApiList entityName="billboards" entityIdName="billboardId" />
     </>
   );
 };
