@@ -26,8 +26,8 @@ import { AlertModal } from "@/components/modal/alert-modal";
 import { ImageUploadComponent } from "@/components/ui/image-upload";
 
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  label: z.string().min(1, { message: "빌보드 이름을 입력해주세요." }),
+  imageUrl: z.string().min(1, { message: "이미지를 선택해주세요." }),
 });
 
 type Props = {
