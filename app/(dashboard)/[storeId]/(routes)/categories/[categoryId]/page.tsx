@@ -1,9 +1,10 @@
 import db from "@/lib/prismadb";
+import { CategoryForm } from "@/app/(dashboard)/[storeId]/(routes)/categories/[categoryId]/_components/category-form";
 
 const CategoryDetail = async ({
   params,
 }: {
-  params: { categoryId: string };
+  params: { categoryId: string; storeId: string };
 }) => {
   // DB에서 카테고리 정보 조회
   const category = await db.category.findUnique({
@@ -12,9 +13,18 @@ const CategoryDetail = async ({
     },
   });
 
+  // DB에서 가게가 만든 빌보드 리스트 조회
+  const billboards = await db.billboard.findMany({
+    where: {
+      storeId: params.storeId,
+    },
+  });
+
   return (
     <div className="flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">//카테고리 폼</div>
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        <CategoryForm initialData={category} billboards={billboards} />
+      </div>
     </div>
   );
 };
