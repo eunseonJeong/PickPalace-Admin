@@ -2,6 +2,7 @@ import db from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+//카테고리 생성
 export async function POST(
   request: Request,
   { params }: { params: { storeId: string } },
