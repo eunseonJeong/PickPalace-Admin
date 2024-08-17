@@ -77,7 +77,24 @@ export const CategoryForm: React.FC<Props> = ({ initialData, billboards }) => {
     });
   };
 
-  const onDelete = () => {};
+  // 카테고리 삭제
+  const onDelete = () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(
+          `/api/${params.storeId}/category/${params.categoryId}`,
+        );
+        router.refresh();
+        toast.success("삭제되었습니다.", { id: "delete-category" });
+      } catch (error) {
+        toast.error("모든 물품과 카테고리를 삭제했는지 확인하세요.", {
+          id: "delete-category",
+        });
+      } finally {
+        setIsOpen(false);
+      }
+    });
+  };
 
   return (
     <>

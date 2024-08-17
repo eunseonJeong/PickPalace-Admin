@@ -26,17 +26,29 @@ export const CellAction: React.FC<Props> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeletePending, startDeleteTransition] = useTransition();
 
+  // 카테고리 삭제
+  const onDeleteConfirm = () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(`/api/${params.storeId}/category/${data.id}`);
+        router.refresh();
+        toast.success("삭제되었습니다.", { id: "delete-category" });
+      } catch (error) {
+        toast.error("모든 물품과 카테고리를 삭제했는지 확인하세요.", {
+          id: "delete-category",
+        });
+      } finally {
+        setIsOpen(false);
+      }
+    });
+  };
+
   // 클립보드에 카테고리 아이디 복사
   const onCopyClick = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success("클립보드에 복사되었습니다.", {
       id: "copy-to-clipboard",
     });
-  };
-
-  // 카테고리 삭제
-  const onDeleteConfirm = () => {
-    setIsOpen(false);
   };
 
   return (
