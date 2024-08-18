@@ -26,11 +26,16 @@ export const CellAction: React.FC<Props> = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeletePending, startDeleteTransition] = useTransition();
 
+  // 카테고리 수정 클릭 시 수정 페이지로 이동
+  const onUpdateClick = () => {
+    router.push(`/${params.storeId}/categories/${data.id}`);
+  };
+
   // 카테고리 삭제
   const onDeleteConfirm = () => {
     startDeleteTransition(async () => {
       try {
-        await axios.delete(`/api/${params.storeId}/category/${data.id}`);
+        await axios.delete(`/api/${params.storeId}/categories/${data.id}`);
         router.refresh();
         toast.success("삭제되었습니다.", { id: "delete-category" });
       } catch (error) {
@@ -73,7 +78,7 @@ export const CellAction: React.FC<Props> = ({ data }) => {
             <Copy className="mr-2 size-4" />
             아이디 복사
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {}}>
+          <DropdownMenuItem onClick={onUpdateClick}>
             <Edit className="mr-2 size-4" />
             카테고리 수정
           </DropdownMenuItem>
