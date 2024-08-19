@@ -60,15 +60,26 @@ export const CategoryForm: React.FC<Props> = ({ initialData, billboards }) => {
     defaultValues: initialData || { name: "", billboardId: "" },
   });
 
+  //카테고리 등록/수정
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
       try {
-        await axios.post(`/api/${params.storeId}/categories`, values);
-        router.refresh();
-        toast.success("카테고리가 등록되었습니다.", {
-          id: "category",
-        });
+        if (initialData) {
+          await axios.patch(
+            `/api/${params.storeId}/categories/${params.categoryId}`,
+            values,
+          );
+          toast.success("카테고리가 수정되었습니다.", {
+            id: "category",
+          });
+        } else {
+          await axios.post(`/api/${params.storeId}/categories`, values);
+          toast.success("카테고리가 등록되었습니다.", {
+            id: "category",
+          });
+        }
         router.push(`/${params.storeId}/categories`);
+        router.refresh();
       } catch (error) {
         toast.error("등록에 실패했습니다.", {
           id: "category",
