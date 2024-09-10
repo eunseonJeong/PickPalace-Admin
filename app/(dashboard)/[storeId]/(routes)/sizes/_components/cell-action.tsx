@@ -10,9 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Copy, Edit, MoreHorizontal } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { useState, useTransition } from "react";
+import axios from "axios";
+import { AlertModal } from "@/components/modal/alert-modal";
 
 type Props = {
   data: SizeColumn;
@@ -22,6 +25,8 @@ export const CellAction: React.FC<Props> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeletePending, startDeleteTransition] = useTransition();
   // 클립보드에 사이즈 아이디 복사
   const onCopyClick = () => {
     navigator.clipboard.writeText(data.id);
@@ -34,8 +39,40 @@ export const CellAction: React.FC<Props> = ({ data }) => {
   const onUpdateClick = () => {
     router.push(`/${params.storeId}/sizes/${data.id}`);
   };
+
+  const onDeleteModalOpen = () => {
+    setIsOpen(true);
+  };
+
+  const onDeleteModalClose = () => {
+    setIsOpen(false);
+  };
+
+  // 사이즈 삭제 확인
+  const onDeleteConfirm = () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
+        toast.success("사이즈를 삭제했습니다.", { id: "size-delete" });
+        router.refresh();
+      } catch (error) {
+        toast.error("이 사이즈를 사용하는 물품을 삭제해주세요.", {
+          id: "size-delete",
+        });
+      } finally {
+        setIsOpen(false);
+      }
+    });
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={isOpen}
+        onClose={onDeleteModalClose}
+        onConfirm={onDeleteConfirm}
+        loading={isDeletePending}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="size-8 p-0">
@@ -52,6 +89,12 @@ export const CellAction: React.FC<Props> = ({ data }) => {
           <DropdownMenuItem onClick={onUpdateClick}>
             <Edit className="mr-2 size-4" />
             사이즈 수정
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={onDeleteModalOpen}
+            className="text-destructive"
+          >
+            <Trash className="mr-2 size-4" /> 사이즈 삭제
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
