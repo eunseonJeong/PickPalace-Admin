@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AlertModal } from "@/components/modal/alert-modal";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -37,7 +38,12 @@ export const SizeForm: React.FC<Props> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
 
+  // 생성 & 수정 트랜지션
   const [isPending, startTransition] = useTransition();
+  // 삭제 트랜지션
+  const [isDeletePending, startDeleteTransition] = useTransition();
+  // 삭제 모달
+  const [isOpen, setIsOpen] = useState(false);
 
   const title = initialData ? "사이즈 수정" : "사이즈 생성";
 
@@ -77,10 +83,55 @@ export const SizeForm: React.FC<Props> = ({ initialData }) => {
       }
     });
   };
+
+  const onDeleteModalOpen = () => {
+    setIsOpen(true);
+  };
+
+  const onDeleteModalClose = () => {
+    setIsOpen(false);
+  };
+
+  // 사이즈 삭제
+  const onDeleteConfirm = () => {
+    startDeleteTransition(async () => {
+      startDeleteTransition(async () => {
+        try {
+          await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`);
+          toast.success("사이즈를 삭제했습니다.", { id: "size-delete" });
+          router.push(`/${params.storeId}/sizes`);
+          router.refresh();
+        } catch (error) {
+          toast.error("이 사이즈를 사용하는 물품을 삭제해주세요.", {
+            id: "size-delete",
+          });
+        } finally {
+          setIsOpen(false);
+        }
+      });
+    });
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={isOpen}
+        onClose={onDeleteModalClose}
+        onConfirm={onDeleteConfirm}
+        loading={isDeletePending}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
+        {initialData && (
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            size="icon"
+            onClick={onDeleteModalOpen}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
