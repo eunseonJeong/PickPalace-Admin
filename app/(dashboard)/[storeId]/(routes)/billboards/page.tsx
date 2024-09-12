@@ -5,7 +5,7 @@ import { ko } from "date-fns/locale";
 import { BillboardClient } from "@/app/(dashboard)/[storeId]/(routes)/billboards/_components/client";
 import { BillboardColumns } from "@/app/(dashboard)/[storeId]/(routes)/billboards/_components/columns";
 
-const Billboards = async ({ params }: { params: { storeId: string } }) => {
+const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   // 빌보드 리스트 DB에서 가져오기
   const billboards = await db.billboard.findMany({
     where: {
@@ -30,4 +30,4 @@ const Billboards = async ({ params }: { params: { storeId: string } }) => {
     </div>
   );
 };
-export default Billboards;
+export default BillboardsPage;

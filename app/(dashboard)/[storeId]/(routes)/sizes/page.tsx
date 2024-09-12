@@ -10,7 +10,7 @@ type Props = {
   };
 };
 
-const SizesPage: React.FC<Props> = async ({
+const SizePage: React.FC<Props> = async ({
   params,
 }: {
   params: { storeId: string };
@@ -40,4 +40,4 @@ const SizesPage: React.FC<Props> = async ({
   );
 };
 
-export default SizesPage;
+export default SizePage;

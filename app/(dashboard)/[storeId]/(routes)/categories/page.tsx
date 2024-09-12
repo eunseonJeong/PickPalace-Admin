@@ -4,7 +4,7 @@ import { CategoryColumn } from "@/app/(dashboard)/[storeId]/(routes)/categories/
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
-const Categories = async ({ params }: { params: { storeId: string } }) => {
+const CategoriePage = async ({ params }: { params: { storeId: string } }) => {
   // 카테고리 리스트 DB에서 가져오기
   const categoriesList = await db.category.findMany({
     where: {
@@ -35,4 +35,4 @@ const Categories = async ({ params }: { params: { storeId: string } }) => {
   );
 };
 
-export default Categories;
+export default CategoriePage;

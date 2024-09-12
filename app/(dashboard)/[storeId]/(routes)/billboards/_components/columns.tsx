@@ -5,8 +5,8 @@ import { CellAction } from "@/app/(dashboard)/[storeId]/(routes)/billboards/_com
 
 export type BillboardColumns = {
   id: string;
-  accessorKey: string;
-  header: string;
+  label: string;
+  createdAt: string;
 };
 
 export const columns: ColumnDef<BillboardColumns>[] = [
@@ -16,7 +16,7 @@ export const columns: ColumnDef<BillboardColumns>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "생성일자",
+    header: "생성일",
   },
   {
     id: "actions",
