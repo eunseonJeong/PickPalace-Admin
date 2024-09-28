@@ -29,7 +29,7 @@ export const ColorClient: React.FC<Props> = ({ data }) => {
     <>
       <div className="flex items-center justify-between">
         <Heading
-          title={`Colors (0)`}
+          title={`Colors (${data.length})`}
           description="색상을 관리할 수 있습니다."
         />
         <Button onClick={onAddClick}>
