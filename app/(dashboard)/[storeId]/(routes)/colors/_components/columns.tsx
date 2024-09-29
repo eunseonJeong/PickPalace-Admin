@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-actions";
 
 export type ColorColumn = {
   id: string;
@@ -32,6 +33,6 @@ export const columns: ColumnDef<ColorColumn>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <div>TODO: Cell Action</div>,
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];
