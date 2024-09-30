@@ -51,14 +51,23 @@ export const ColorForm: React.FC<Props> = ({ initialData }) => {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || { name: "", value: "" },
   });
-
-  // 색상 추가
+  // 색상 등록 & 수정
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
       try {
-        await axios.post(`/api/${params.storeId}/colors`, values);
+        if (initialData) {
+          // 색상 수정
+          await axios.patch(
+            `/api/${params.storeId}/colors/${params.colorId}`,
+            values,
+          );
+          toast.success("색상이 수정되었습니다.", { id: "color" });
+        } else {
+          // 색상 등록
+          await axios.post(`/api/${params.storeId}/colors`, values);
+          toast.success("색상이 등록되었습니다.", { id: "color" });
+        }
         router.refresh();
-        toast.success("색상이 등록되었습니다.", { id: "color" });
         router.push(`/${params.storeId}/colors`);
       } catch (error) {
         toast.error("실패했습니다.", { id: "color" });
