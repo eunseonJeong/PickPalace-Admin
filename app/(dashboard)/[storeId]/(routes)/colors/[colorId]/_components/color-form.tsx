@@ -16,11 +16,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { AlertModal } from "@/components/modal/alert-modal";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "색상 이름을 입력해주세요." }),
@@ -41,6 +42,14 @@ export const ColorForm: React.FC<Props> = ({ initialData }) => {
   // 색상 추가 트랜지션
   const [isPending, startTransition] = useTransition();
 
+  // 색상 삭제모달 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const onDeleteModalOpen = () => setIsDeleteModalOpen(true);
+  const onDeleteModalClose = () => setIsDeleteModalOpen(false);
+
+  // 색상 삭제 트랜지션
+  const [isDeletePending, startDeleteTransition] = useTransition();
+
   const title = initialData ? "색상 수정" : "색상 등록";
   const description = initialData
     ? "색상을 수정합니다."
@@ -51,6 +60,7 @@ export const ColorForm: React.FC<Props> = ({ initialData }) => {
     resolver: zodResolver(formSchema),
     defaultValues: initialData || { name: "", value: "" },
   });
+
   // 색상 등록 & 수정
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
@@ -75,10 +85,40 @@ export const ColorForm: React.FC<Props> = ({ initialData }) => {
     });
   };
 
+  // 색상 삭제
+  const onDelete = () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(`/api/${params.storeId}/colors/${params.colorId}`);
+        toast.success("색상이 삭제되었습니다.", { id: "color" });
+        router.push(`/${params.storeId}/colors`);
+        router.refresh();
+      } catch (error) {
+        toast.error("실패했습니다.", { id: "color" });
+      }
+    });
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={isDeleteModalOpen}
+        loading={isDeletePending}
+        onClose={onDeleteModalClose}
+        onConfirm={onDelete}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
+        {initialData && (
+          <Button
+            size="icon"
+            variant="destructive"
+            onClick={onDeleteModalOpen}
+            disabled={isDeletePending}
+          >
+            <Trash className="size-4" />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
