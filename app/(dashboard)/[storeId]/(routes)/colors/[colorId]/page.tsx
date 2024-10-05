@@ -1,7 +1,7 @@
 import db from "@/lib/prismadb";
 import { ColorForm } from "./_components/color-form";
 
-const ColorEditPage = async ({ params }: { params: { colorId: string } }) => {
+const ColorDetail = async ({ params }: { params: { colorId: string } }) => {
   // DB에서 색상 조회
   const color = await db.color.findUnique({
     where: {
@@ -18,4 +18,4 @@ const ColorEditPage = async ({ params }: { params: { colorId: string } }) => {
   );
 };
 
-export default ColorEditPage;
+export default ColorDetail;
