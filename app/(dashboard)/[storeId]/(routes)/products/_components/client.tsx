@@ -1,18 +1,28 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Heading } from "@/components/ui/heading";
+
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
-export const ProductClient = () => {
+import { columns, ProductColumn } from "./columns";
+import { Plus } from "lucide-react";
+import { DataTable } from "@/components/ui/data-table";
+import { ApiList } from "@/components/ui/api-list";
+
+type Props = {
+  data: ProductColumn[];
+};
+
+export const ProductClient: React.FC<Props> = ({ data }) => {
   const router = useRouter();
   const params = useParams();
 
   const onAddClick = () => {
     router.push(`/${params.storeId}/products/new`);
   };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -23,6 +33,10 @@ export const ProductClient = () => {
         </Button>
       </div>
       <Separator />
+      <DataTable searchKey="name" columns={columns} data={data} />
+      <Heading title="API" description="상품을 위한 API를 제공합니다." />
+      <Separator />
+      <ApiList entityName="products" entityIdName="productId" />
     </>
   );
 };
