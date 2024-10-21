@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "@/app/(dashboard)/[storeId]/(routes)/products/_components/cell-actions";
 
 export type ProductColumn = {
   id: string;
@@ -58,6 +59,6 @@ export const columns: ColumnDef<ProductColumn>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <div>TODO: Cell Actions</div>,
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];

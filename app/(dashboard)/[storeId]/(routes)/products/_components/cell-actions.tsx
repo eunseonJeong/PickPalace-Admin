@@ -17,7 +17,7 @@ type Props = {
   data: ProductColumn;
 };
 
-export const CellActionComponent = ({ data }: Props) => {
+export const CellAction = ({ data }: Props) => {
   const router = useRouter();
   const params = useParams();
 
