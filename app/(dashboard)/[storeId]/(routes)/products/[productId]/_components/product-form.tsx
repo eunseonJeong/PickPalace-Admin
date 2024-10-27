@@ -26,10 +26,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Category, Color, Image, Product, Size } from "@prisma/client";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { AlertModal } from "@/components/modal/alert-modal";
+import { Trash } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -60,6 +62,13 @@ export const ProductForm: React.FC<Props> = ({
 
   // 등록 & 수정 트랜지션
   const [isPending, startTransition] = useTransition();
+
+  // 삭제 트랜지션
+  const [isDeletePending, startDeleteTransition] = useTransition();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const onDeleteModalOpen = () => setIsDeleteModalOpen(true);
+  const onDeleteModalClose = () => setIsDeleteModalOpen(false);
 
   const title = initialData ? "상품 수정" : "상품 등록";
   const description = initialData ? "상품을 수정합니다." : "상품을 등록합니다.";
@@ -108,10 +117,42 @@ export const ProductForm: React.FC<Props> = ({
     });
   };
 
+  // 상품 삭제
+  const onDelete = () => {
+    startDeleteTransition(async () => {
+      try {
+        await axios.delete(
+          `/api/${params.storeId}/products/${params.productId}`,
+        );
+        toast.success("상품이 삭제되었습니다.", { id: "product" });
+        router.push(`/${params.storeId}/products`);
+        router.refresh();
+      } catch (error) {
+        toast.error("실패했습니다.", { id: "product" });
+      }
+    });
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
+        onConfirm={onDelete}
+        loading={isDeletePending}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
+        {initialData && (
+          <Button
+            variant="destructive"
+            size="icon"
+            disabled={isPending}
+            onClick={onDeleteModalOpen}
+          >
+            <Trash className="size-4" />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
