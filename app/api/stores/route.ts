@@ -6,7 +6,6 @@ export async function POST(request: Request) {
   try {
     const { userId } = auth();
     const body = await request.json();
-
     const { name } = body;
 
     // 인증된 사용자인지 확인

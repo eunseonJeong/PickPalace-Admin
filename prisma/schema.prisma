@@ -14,16 +14,41 @@ model Store {
   name   String
   userId String
 
+  billboards Billboard[] @relation("StoreToBillboard")
+  categories Category[]  @relation("StoreToCategory")
+  sizes      Size[]      @relation("StoreToSize")
+  colors     Color[]     @relation("StoreToColor")
   products   Product[]   @relation("StoreToProduct")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Billboard {
+  id       String @id @default(uuid())
+  label    String
+  imageUrl String
+  categories Category[]
+
+  storeId String
+  store   Store  @relation("StoreToBillboard", fields: [storeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+}
+
+
 model Category {
   id   String @id @default(uuid())
   name String
-  products Product[] @relation("CategoryToProduct")
+
+  storeId     String
+  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  products    Product[] @relation("CategoryToProduct")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,8 +60,13 @@ model Size {
   value String
   products Product[]
 
+  storeId String
+  store   Store  @relation("StoreToSize", fields: [storeId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 model Color {
@@ -45,19 +75,25 @@ model Color {
   value String
   products Product[]
 
+  storeId String
+  store   Store  @relation("StoreToColor", fields: [storeId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }
 
 model Product {
   id         String  @id @default(uuid())
   name       String
-  description String? // 추가
-  sku        String? @unique // 추가: 상품 고유 코드
+  price      Decimal
+  isFeatured Boolean @default(false)
+  isArchived Boolean @default(false)
+  images     Image[]
 
-  stores StoreToProduct[] // 변경된 부분
-  images Image[]
-
+  storeId    String
+  store      Store    @relation("StoreToProduct", fields: [storeId], references: [id])
   categoryId String
   category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
   sizeId     String
@@ -68,6 +104,7 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([storeId])
   @@index([categoryId])
   @@index([sizeId])
   @@index([colorId])
